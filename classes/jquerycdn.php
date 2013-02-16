@@ -16,7 +16,7 @@ class Jquerycdn
 {
 	protected static function validate_version($version)
 	{
-		$pattern = '/^[1-9][0-9]*(\.[0-9]+)*$/';
+		$pattern = '/\A[1-9][0-9]*(\.[0-9]+)*\z/';
 		if (preg_match($pattern,$version))
 		{ 
 			return true;

@@ -2,45 +2,74 @@
 /**
  * Package Jquerycdn tests
  *
- * @group Package
+ * @group JquerycdnPackage
  */
 class Test_Jquerycdn extends TestCase
 {
 	protected $check;
 	protected $fallback;
-	public function setup()
-	{
+	protected $orignal_ver;
+    public function setup()
+    {
+		$this->original_ver = \Config::get('jquerycdn.version');
 		\Config::set('jquerycdn.version','1.7.2');
 		$this->check = new ReflectionMethod('Jquerycdn', 'validate_version');
 		$this->check->setAccessible(true);
 		$this->script = new ReflectionMethod('Jquerycdn', 'addscript');
 		$this->script->setAccessible(true);
-	}
-
-	public function test_check_version_success()
+    }
+    
+    public function success()
 	{
-		$output = $this->check->invoke(new Jquerycdn(), '1.7.2');
-		$this->asserttrue($output);
+		return array(
+			array('1.7'),
+			array('1.7.2'),
+			array('2'),
+			array('2.0'),
+		);
 	}
+    /**
+     * @dataProvider success
+     */
+    public function test_check_version_success($data)
+    {
+		$output = $this->check->invoke(new Jquerycdn(), $data);
+        $this->asserttrue($output);
+    }
 
-	public function test_check_version_fail()
+    public function failure()
 	{
-		$output = $this->check->invoke(new Jquerycdn(), '0.7.2');
-		$this->assertfalse($output);
+		return array(
+			array('1..7'),
+			array("1.7\n"),
+			array('2. 0 '),
+		);
 	}
+    /**
+     * @dataProvider failure
+     */
+    public function test_check_version_fail($data)
+    {
+		$output = $this->check->invoke(new Jquerycdn(), $data);
+        $this->assertfalse($output);
+    }
 
-	public function testGetCdngoogle()
-	{
+    public function testGetCdngoogle()
+    {
 		$expected = '	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-			';
+';
 		$output = Jquerycdn::getcdn('google');
-		$this->assertEquals($expected, $output);
-	}
-	public function testAddscript()
-	{
+        $this->assertEquals($expected, $output);
+    }
+    public function testAddscript()
+    {
 		$expected = "<script>window.jQuery || document.write('http://127.0.0.1/js/jquery-1.7.2.min.js')</script>";
 		$output = $this->script->invoke(new Jquerycdn(), 'http://127.0.0.1/js/jquery-1.7.2.min.js');
-		$this->assertEquals($expected, $output);
-	}
+        $this->assertEquals($expected, $output);
+    }
 
+	public function teardown()
+	{
+		\Config::set('jquerycdn.version',$this->original_ver);
+	}
 }
