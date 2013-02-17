@@ -20,9 +20,9 @@
  */
 
 return array(
-	'cdn' => array(
-		'google' => 'https://ajax.googleapis.com/ajax/libs/jquery/%s/jquery.min.js',
-	),
-	'fallback' => 'jquery-%s.min.js',
-	'version' => '1.7.2',
+    'cdn' => array(
+        'google' => 'https://ajax.googleapis.com/ajax/libs/jquery/%s/jquery.min.js',
+    ),
+    'fallback' => 'jquery-%s.min.js',
+    'version' => '1.7.2',
 );
